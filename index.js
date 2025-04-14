@@ -29,8 +29,12 @@ async function getPokemonDetails(pokemonName) {
       `https://pokeapi.co/api/v2/pokemon/${pokemonName.toLowerCase()}`,
     );
     const data = await response.json();
+    // Use official artwork for better resolution
+    const image =
+      data.sprites.other?.["official-artwork"]?.front_default ||
+      data.sprites.front_default;
     return {
-      image: data.sprites.front_default,
+      image,
       id: data.id,
       types: data.types.map((typeInfo) => typeInfo.type.name).join(", "),
       abilities: data.abilities
@@ -55,8 +59,8 @@ async function displayPokemonAsAscii(pokemonName) {
 
     const options = {
       fit: "box",
-      width: Math.min(process.stdout.columns, 50),
-      height: Math.min(Math.floor(process.stdout.rows / 2), 25),
+      width: Math.min(process.stdout.columns, 100), // Increased for higher resolution
+      height: Math.min(Math.floor(process.stdout.rows / 2), 50), // Increase height as well
     };
 
     // Print Pokémon information
