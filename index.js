@@ -1,16 +1,22 @@
 import fetch from "node-fetch";
 import asciifyImage from "asciify-image";
+import readline from "readline";
+
+// Create readline interface
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 
 async function getPokemonImageUrl(pokemonName) {
   try {
     const response = await fetch(
-      `https://pokeapi.co/api/v2/pokemon/${pokemonName}`,
+      `https://pokeapi.co/api/v2/pokemon/${pokemonName.toLowerCase()}`,
     );
     const data = await response.json();
-    const imageUrl = data.sprites.front_default;
-    return imageUrl;
+    return data.sprites.front_default;
   } catch (error) {
-    console.error("Error fetching Pokemon image URL:", error);
+    console.error("Error fetching Pokémon image URL:", error);
     throw error;
   }
 }
@@ -25,8 +31,8 @@ async function displayPokemonAsAscii(pokemonName) {
 
     const options = {
       fit: "box",
-      width: 50,
-      height: 50,
+      width: Math.min(process.stdout.columns, 50),
+      height: Math.min(Math.floor(process.stdout.rows / 2), 25),
     };
 
     asciifyImage(imageUrl, options, (err, asciified) => {
@@ -41,5 +47,16 @@ async function displayPokemonAsAscii(pokemonName) {
   }
 }
 
-const pokemonName = process.argv[2] || "pikachu";
-displayPokemonAsAscii(pokemonName);
+async function getUserInput() {
+  return new Promise((resolve) => {
+    rl.question("Enter the name of the Pokémon to display: ", (answer) => {
+      resolve(answer.trim() || "pikachu");
+      rl.close();
+    });
+  });
+}
+
+(async () => {
+  const pokemonName = await getUserInput();
+  await displayPokemonAsAscii(pokemonName);
+})();
