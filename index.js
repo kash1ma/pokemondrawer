@@ -68,7 +68,7 @@ async function displayPokemonAsAscii(pokemonName) {
     console.log(`Name: ${pokemonName}`);
     console.log(`Types: ${types}`);
     console.log(`Abilities: ${abilities}`);
-    console.log(`Weight: ${weight} (hectograms)`);
+    console.log(`Weight: ${weight / 10} (kilograms)`);
 
     console.log("\nASCII Art:\n");
 
